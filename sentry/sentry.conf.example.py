@@ -1,6 +1,6 @@
 # This file is just Python, with a touch of Django which means
 # you can inherit and tweak settings to your hearts content.
-
+import os
 from sentry.conf.server import *  # NOQA
 
 BYTE_MULTIPLIER = 1024
@@ -42,12 +42,12 @@ INTERNAL_SYSTEM_IPS = (get_internal_network(),)
 
 DATABASES = {
     "default": {
-        "ENGINE": "sentry.db.postgres",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "",
-        "HOST": "postgres",
-        "PORT": "",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRESQL_DB_NAME", "postgres"),
+        "USER": os.environ.get("POSTGRESQL_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRESQL_PASSWORD", ""),
+        "HOST": os.environ.get("POSTGRESQL_HOST", "postgres"),
+        "PORT": 5432,
     }
 }
 
@@ -91,10 +91,12 @@ SENTRY_OPTIONS["redis.clusters"] = {
 # information on configuring your queue broker and workers. Sentry relies
 # on a Python framework called Celery to manage queues.
 
-rabbitmq_host = None
-if rabbitmq_host:
-    BROKER_URL = "amqp://{username}:{password}@{host}/{vhost}".format(
-        username="guest", password="guest", host=rabbitmq_host, vhost="/"
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
+RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'guest')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'guest')
+if RABBITMQ_HOST:
+    BROKER_URL = "amqps://{username}:{password}@{host}/{vhost}".format(
+        username=RABBITMQ_USERNAME, password=RABBITMQ_PASSWORD, host=RABBITMQ_HOST, vhost="/"
     )
 else:
     BROKER_URL = "redis://:{password}@{host}:{port}/{db}".format(
@@ -126,7 +128,7 @@ SENTRY_CACHE = "sentry.cache.redis.RedisCache"
 DEFAULT_KAFKA_OPTIONS = {
     "bootstrap.servers": "kafka:9092",
     "message.max.bytes": 50000000,
-    "socket.timeout.ms": 1000,
+    "socket.timeout.ms": 10000,
 }
 
 SENTRY_EVENTSTREAM = "sentry.eventstream.kafka.KafkaEventStream"
