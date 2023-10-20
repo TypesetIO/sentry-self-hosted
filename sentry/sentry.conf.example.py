@@ -218,7 +218,7 @@ SENTRY_WEB_OPTIONS = {
     "http-chunked-input": True,
     # the number of web workers
     "workers": 3,
-    "threads": 10,
+    "threads": 4,
     "memory-report": False,
     # Some stuff so uwsgi will cycle workers sensibly
     "max-requests": 100000,
