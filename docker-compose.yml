@@ -330,7 +330,7 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 2
+      replicas: 3
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
