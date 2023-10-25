@@ -187,8 +187,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 30
-    deploy:
-      replicas: 2
   clickhouse:
     <<: *restart_policy
     image: clickhouse-self-hosted-local
@@ -223,8 +221,6 @@ services:
       interval: 10s
       timeout: 30s
       retries: 30
-    deploy:
-      replicas: 2
   geoipupdate:
     image: "maxmindinc/geoipupdate:v6.0.0"
     # Override the entrypoint in order to avoid using envvars for config.
