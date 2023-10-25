@@ -236,28 +236,20 @@ services:
   snuba-consumer:
     <<: *snuba_defaults
     command: consumer --storage errors --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 2
   # Kafka consumer responsible for feeding outcomes into Clickhouse
   # Use --auto-offset-reset=earliest to recover up to 7 days of TSDB data
   # since we did not do a proper migration
   snuba-outcomes-consumer:
     <<: *snuba_defaults
     command: consumer --storage outcomes_raw --auto-offset-reset=earliest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 2
   # Kafka consumer responsible for feeding session data into Clickhouse
   snuba-sessions-consumer:
     <<: *snuba_defaults
     command: consumer --storage sessions_raw --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 2
   # Kafka consumer responsible for feeding transactions data into Clickhouse
   snuba-transactions-consumer:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 2
   snuba-replays-consumer:
     <<: *snuba_defaults
     command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -338,20 +330,26 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 3
+      replicas: 2
+  save-event-transaction-worker:
+    <<: *sentry_defaults
+    command: run worker -Q events.save_event_transaction
+    deploy:
+      replicas: 5
+  post-process-transactions-worker:
+    <<: *sentry_defaults
+    command: run worker -Q post_process_transactions
+    deploy:
+      replicas: 2
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
-    deploy:
-      replicas: 2
   attachments-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-attachments --consumer-group ingest-consumer
   transactions-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
-    deploy:
-      replicas: 2
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
