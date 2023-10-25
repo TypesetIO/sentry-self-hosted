@@ -164,8 +164,8 @@ services:
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
-      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "3"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
       KAFKA_LOG_RETENTION_HOURS: "24"
       KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
       KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
@@ -187,6 +187,8 @@ services:
       interval: 10s
       timeout: 10s
       retries: 30
+    deploy:
+      replicas: 2
   clickhouse:
     <<: *restart_policy
     image: clickhouse-self-hosted-local
@@ -221,6 +223,8 @@ services:
       interval: 10s
       timeout: 30s
       retries: 30
+    deploy:
+      replicas: 2
   geoipupdate:
     image: "maxmindinc/geoipupdate:v6.0.0"
     # Override the entrypoint in order to avoid using envvars for config.
@@ -236,20 +240,28 @@ services:
   snuba-consumer:
     <<: *snuba_defaults
     command: consumer --storage errors --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 2
   # Kafka consumer responsible for feeding outcomes into Clickhouse
   # Use --auto-offset-reset=earliest to recover up to 7 days of TSDB data
   # since we did not do a proper migration
   snuba-outcomes-consumer:
     <<: *snuba_defaults
     command: consumer --storage outcomes_raw --auto-offset-reset=earliest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 2
   # Kafka consumer responsible for feeding session data into Clickhouse
   snuba-sessions-consumer:
     <<: *snuba_defaults
     command: consumer --storage sessions_raw --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 2
   # Kafka consumer responsible for feeding transactions data into Clickhouse
   snuba-transactions-consumer:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 2
   snuba-replays-consumer:
     <<: *snuba_defaults
     command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -334,12 +346,16 @@ services:
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
+    deploy:
+      replicas: 2
   attachments-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-attachments --consumer-group ingest-consumer
   transactions-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
+    deploy:
+      replicas: 2
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
@@ -421,6 +437,8 @@ services:
         <<: *depends_on-healthy
       web:
         <<: *depends_on-healthy
+    deploy:
+      replicas: 2
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
