@@ -412,8 +412,6 @@ services:
     depends_on:
       - web
       - relay
-    deploy:
-      replicas: 2
   relay:
     <<: *restart_policy
     image: "$RELAY_IMAGE"
