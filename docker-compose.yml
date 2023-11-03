@@ -107,7 +107,7 @@ x-snuba-defaults: &snuba_defaults
   environment:
     SNUBA_SETTINGS: self_hosted
     CLICKHOUSE_HOST: clickhouse
-    DEFAULT_BROKERS: "kafka1:9092,kafka2:9092,kafka3:9092"
+    DEFAULT_BROKERS: "kafka-1:9092,kafka-2:9092,kafka-3:9092"
     REDIS_HOST: redis
     UWSGI_MAX_REQUESTS: "10000"
     UWSGI_DISABLE_LOGGING: "true"
@@ -171,7 +171,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-1:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://0.0.0.0:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
       KAFKA_LOG_RETENTION_HOURS: "3"
@@ -182,7 +182,7 @@ services:
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
       KAFKA_BROKER_ID: 1
-      BOOTSTRAP_SERVERS: kafka1:9092,kafka2:9092,kafka3:9092
+      BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
     ulimits:
       nofile:
         soft: 4096
@@ -205,7 +205,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-2:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-2:9092,PLAINTEXT_HOST://0.0.0.0:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
       KAFKA_LOG_RETENTION_HOURS: "3"
@@ -216,7 +216,7 @@ services:
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
       KAFKA_BROKER_ID: 2
-      BOOTSTRAP_SERVERS: kafka1:9092,kafka2:9092,kafka3:9092
+      BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
     ulimits:
       nofile:
         soft: 4096
@@ -239,7 +239,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://0.0.0.0:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "3"
       KAFKA_LOG_RETENTION_HOURS: "3"
@@ -250,7 +250,7 @@ services:
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
       KAFKA_BROKER_ID: 3
-      BOOTSTRAP_SERVERS: kafka1:9092,kafka2:9092,kafka3:9092
+      BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
     ulimits:
       nofile:
         soft: 4096
@@ -522,8 +522,8 @@ services:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
     environment:
-      SENTRY_KAFKA_BROKERS_PROFILING: "kafka1:9092,kafka2:9092,kafka3:9092"
-      SENTRY_KAFKA_BROKERS_OCCURRENCES: "kafka1:9092,kafka2:9092,kafka3:9092"
+      SENTRY_KAFKA_BROKERS_PROFILING: "kafka-1:9092,kafka-2:9092,kafka-3:9092"
+      SENTRY_KAFKA_BROKERS_OCCURRENCES: "kafka-1:9092,kafka-2:9092,kafka-3:9092"
       SENTRY_BUCKET_PROFILES: file://localhost//var/lib/sentry-profiles
       SENTRY_SNUBA_HOST: "http://snuba-api:1218"
     volumes:
