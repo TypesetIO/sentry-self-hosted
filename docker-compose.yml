@@ -168,15 +168,10 @@ services:
     depends_on:
       zookeeper:
         <<: *depends_on-healthy
-      kafka-2:
-        <<: *depends_on-healthy
-      kafka-3:
-        <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-1:9091"
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
       KAFKA_LOG_RETENTION_HOURS: "3"
@@ -207,15 +202,10 @@ services:
     depends_on:
       zookeeper:
         <<: *depends_on-healthy
-      kafka-1:
-        <<: *depends_on-healthy
-      kafka-3:
-        <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-2:9092"
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
       KAFKA_LOG_RETENTION_HOURS: "3"
@@ -246,15 +236,10 @@ services:
     depends_on:
       zookeeper:
         <<: *depends_on-healthy
-      kafka-1:
-        <<: *depends_on-healthy
-      kafka-2:
-        <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9093"
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "3"
       KAFKA_LOG_RETENTION_HOURS: "3"
