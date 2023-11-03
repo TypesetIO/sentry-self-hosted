@@ -189,8 +189,8 @@ services:
         soft: 4096
         hard: 4096
     volumes:
-      - "sentry-kafka:/var/lib/kafka/data"
-      - "sentry-kafka-log:/var/lib/kafka/log"
+      - "sentry-kafka-1:/var/lib/kafka/data"
+      - "sentry-kafka-log-1:/var/lib/kafka/log"
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
@@ -217,15 +217,15 @@ services:
       KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
-      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_ID: 2
       BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092,kafka3:9093
     ulimits:
       nofile:
         soft: 4096
         hard: 4096
     volumes:
-      - "sentry-kafka:/var/lib/kafka/data"
-      - "sentry-kafka-log:/var/lib/kafka/log"
+      - "sentry-kafka-2:/var/lib/kafka/data"
+      - "sentry-kafka-log-2:/var/lib/kafka/log"
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
@@ -252,15 +252,15 @@ services:
       KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
-      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_ID: 3
       BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092,kafka3:9093
     ulimits:
       nofile:
         soft: 4096
         hard: 4096
     volumes:
-      - "sentry-kafka:/var/lib/kafka/data"
-      - "sentry-kafka-log:/var/lib/kafka/log"
+      - "sentry-kafka-3:/var/lib/kafka/data"
+      - "sentry-kafka-log-3:/var/lib/kafka/log"
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
@@ -554,7 +554,11 @@ volumes:
     external: true
   sentry-zookeeper:
     external: true
-  sentry-kafka:
+  sentry-kafka-1:
+    external: true
+  sentry-kafka-2:
+    external: true
+  sentry-kafka-3:
     external: true
   sentry-clickhouse:
     external: true
@@ -570,6 +574,8 @@ volumes:
   sentry-smtp:
   sentry-nginx-cache:
   sentry-zookeeper-log:
-  sentry-kafka-log:
+  sentry-kafka-log-1:
+  sentry-kafka-log-2:
+  sentry-kafka-log-3:
   sentry-smtp-log:
   sentry-clickhouse-log:
