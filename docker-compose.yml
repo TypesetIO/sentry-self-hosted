@@ -427,7 +427,7 @@ services:
       web:
         <<: *depends_on-healthy
     deploy:
-      replicas: 2
+      replicas: 3
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
