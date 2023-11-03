@@ -26,7 +26,11 @@ x-sentry-defaults: &sentry_defaults
   depends_on:
     redis:
       <<: *depends_on-healthy
-    kafka:
+    kafka-1:
+      <<: *depends_on-healthy
+    kafka-2:
+      <<: *depends_on-healthy
+    kafka-3:
       <<: *depends_on-healthy
     memcached:
       <<: *depends_on-default
@@ -91,7 +95,11 @@ x-snuba-defaults: &snuba_defaults
   depends_on:
     clickhouse:
       <<: *depends_on-healthy
-    kafka:
+    kafka-1:
+      <<: *depends_on-healthy
+    kafka-2:
+      <<: *depends_on-healthy
+    kafka-3:
       <<: *depends_on-healthy
     redis:
       <<: *depends_on-healthy
@@ -493,7 +501,11 @@ services:
         source: ./geoip
         target: /geoip
     depends_on:
-      kafka:
+      kafka-1:
+        <<: *depends_on-healthy
+      kafka-2:
+        <<: *depends_on-healthy
+      kafka-3:
         <<: *depends_on-healthy
       redis:
         <<: *depends_on-healthy
@@ -512,7 +524,11 @@ services:
     volumes:
       - sentry-vroom:/var/lib/sentry-profiles
     depends_on:
-      kafka:
+      kafka-1:
+        <<: *depends_on-healthy
+      kafka-2:
+        <<: *depends_on-healthy
+      kafka-3:
         <<: *depends_on-healthy
   vroom-cleanup:
     <<: *restart_policy
