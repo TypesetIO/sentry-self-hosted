@@ -171,7 +171,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-1:9091"
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
@@ -194,7 +194,7 @@ services:
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
-      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9091 --list"]
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-1:9091 --list"]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -206,7 +206,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-2:9092"
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
@@ -229,7 +229,7 @@ services:
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
-      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9091 --list"]
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-2:9091 --list"]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -241,7 +241,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9093"
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "3"
@@ -264,7 +264,7 @@ services:
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
-      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9093 --list"]
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-3:9093 --list"]
       interval: 10s
       timeout: 10s
       retries: 30
