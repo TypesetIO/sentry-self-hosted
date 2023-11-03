@@ -99,7 +99,7 @@ x-snuba-defaults: &snuba_defaults
   environment:
     SNUBA_SETTINGS: self_hosted
     CLICKHOUSE_HOST: clickhouse
-    DEFAULT_BROKERS: "kafka:9092"
+    DEFAULT_BROKERS: "kafka1:9091,kafka2:9092,kafka3:9093"
     REDIS_HOST: redis
     UWSGI_MAX_REQUESTS: "10000"
     UWSGI_DISABLE_LOGGING: "true"
@@ -155,7 +155,7 @@ services:
       <<: *healthcheck_defaults
       test:
         ["CMD-SHELL", 'echo "ruok" | nc -w 2 localhost 2181 | grep imok']
-  kafka:
+  kafka-1:
     <<: *restart_policy
     depends_on:
       zookeeper:
@@ -163,16 +163,19 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9091"
+      KAFKA_LISTENERS: PLAINTEXT://$SENTRY_BIND:9091
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
-      KAFKA_LOG_RETENTION_HOURS: "4"
+      KAFKA_LOG_RETENTION_HOURS: "3"
       KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
       KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
       CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
       KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
+      KAFKA_BROKER_ID: 1
+      BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092,kafka3:9093
     ulimits:
       nofile:
         soft: 4096
@@ -183,7 +186,77 @@ services:
       - "sentry-secrets:/etc/kafka/secrets"
     healthcheck:
       <<: *healthcheck_defaults
-      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9092 --list"]
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9091 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+  kafka-2:
+    <<: *restart_policy
+    depends_on:
+      zookeeper:
+        <<: *depends_on-healthy
+    image: "confluentinc/cp-kafka:5.5.7"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_LISTENERS: PLAINTEXT://$SENTRY_BIND:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
+      KAFKA_LOG_RETENTION_HOURS: "3"
+      KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
+      KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
+      KAFKA_BROKER_ID: 1
+      BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092,kafka3:9093
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    volumes:
+      - "sentry-kafka:/var/lib/kafka/data"
+      - "sentry-kafka-log:/var/lib/kafka/log"
+      - "sentry-secrets:/etc/kafka/secrets"
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9091 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+  kafka-3:
+    <<: *restart_policy
+    depends_on:
+      zookeeper:
+        <<: *depends_on-healthy
+    image: "confluentinc/cp-kafka:5.5.7"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9093"
+      KAFKA_LISTENERS: PLAINTEXT://$SENTRY_BIND:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
+      KAFKA_LOG_RETENTION_HOURS: "3"
+      KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
+      KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
+      KAFKA_BROKER_ID: 1
+      BOOTSTRAP_SERVERS: kafka1:9091,kafka2:9092,kafka3:9093
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    volumes:
+      - "sentry-kafka:/var/lib/kafka/data"
+      - "sentry-kafka-log:/var/lib/kafka/log"
+      - "sentry-secrets:/etc/kafka/secrets"
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka:9093 --list"]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -432,8 +505,8 @@ services:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
     environment:
-      SENTRY_KAFKA_BROKERS_PROFILING: "kafka:9092"
-      SENTRY_KAFKA_BROKERS_OCCURRENCES: "kafka:9092"
+      SENTRY_KAFKA_BROKERS_PROFILING: "kafka1:9091,kafka2:9092,kafka3:9093"
+      SENTRY_KAFKA_BROKERS_OCCURRENCES: "kafka1:9091,kafka2:9092,kafka3:9093"
       SENTRY_BUCKET_PROFILES: file://localhost//var/lib/sentry-profiles
       SENTRY_SNUBA_HOST: "http://snuba-api:1218"
     volumes:
