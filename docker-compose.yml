@@ -168,6 +168,10 @@ services:
     depends_on:
       zookeeper:
         <<: *depends_on-healthy
+      kafka-2:
+        <<: *depends_on-healthy
+      kafka-3:
+        <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
@@ -203,6 +207,10 @@ services:
     depends_on:
       zookeeper:
         <<: *depends_on-healthy
+      kafka-1:
+        <<: *depends_on-healthy
+      kafka-3:
+        <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
@@ -237,6 +245,10 @@ services:
     <<: *restart_policy
     depends_on:
       zookeeper:
+        <<: *depends_on-healthy
+      kafka-1:
+        <<: *depends_on-healthy
+      kafka-2:
         <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
