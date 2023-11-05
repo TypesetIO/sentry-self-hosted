@@ -196,8 +196,8 @@ services:
     healthcheck:
       <<: *healthcheck_defaults
       test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-1:9092 --list"]
-      interval: 10s
-      timeout: 10s
+      interval: 30s
+      timeout: 90s
       retries: 30
   kafka-2:
     <<: *restart_policy
@@ -232,8 +232,8 @@ services:
     healthcheck:
       <<: *healthcheck_defaults
       test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-2:9092 --list"]
-      interval: 10s
-      timeout: 10s
+      interval: 30s
+      timeout: 90s
       retries: 30
   kafka-3:
     <<: *restart_policy
