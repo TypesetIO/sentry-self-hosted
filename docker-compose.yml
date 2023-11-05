@@ -268,8 +268,8 @@ services:
     healthcheck:
       <<: *healthcheck_defaults
       test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-3:9092 --list"]
-      interval: 10s
-      timeout: 10s
+      interval: 30s
+      timeout: 90s
       retries: 30
   clickhouse:
     <<: *restart_policy
