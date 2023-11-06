@@ -171,7 +171,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "5"
       KAFKA_LOG_RETENTION_HOURS: "3"
