@@ -28,6 +28,10 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-healthy
     kafka:
       <<: *depends_on-healthy
+    kafka-2:
+      <<: *depends_on-healthy
+    kafka-3:
+      <<: *depends_on-healthy
     memcached:
       <<: *depends_on-default
     smtp:
@@ -92,6 +96,10 @@ x-snuba-defaults: &snuba_defaults
     clickhouse:
       <<: *depends_on-healthy
     kafka:
+      <<: *depends_on-healthy
+    kafka-2:
+      <<: *depends_on-healthy
+    kafka-3:
       <<: *depends_on-healthy
     redis:
       <<: *depends_on-healthy
@@ -163,9 +171,7 @@ services:
     image: "confluentinc/cp-kafka:5.5.7"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9091"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: "kafka:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "5"
       KAFKA_LOG_RETENTION_HOURS: "3"
@@ -503,6 +509,10 @@ services:
     depends_on:
       kafka:
         <<: *depends_on-healthy
+      kafka-2:
+        <<: *depends_on-healthy
+      kafka-3:
+        <<: *depends_on-healthy
       redis:
         <<: *depends_on-healthy
       web:
@@ -521,6 +531,10 @@ services:
       - sentry-vroom:/var/lib/sentry-profiles
     depends_on:
       kafka:
+        <<: *depends_on-healthy
+      kafka-2:
+        <<: *depends_on-healthy
+      kafka-3:
         <<: *depends_on-healthy
   vroom-cleanup:
     <<: *restart_policy
