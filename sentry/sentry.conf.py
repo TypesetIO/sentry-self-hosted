@@ -130,9 +130,9 @@ CACHES = {
 SENTRY_CACHE = "sentry.cache.redis.RedisCache"
 
 DEFAULT_KAFKA_OPTIONS = {
-    "bootstrap.servers": "kafka-1:9092,kafka-2:9092,kafka-3:9092",
+    "bootstrap.servers": "kafka:9092",
     "message.max.bytes": 50000000,
-    "socket.timeout.ms": 10000,
+    "socket.timeout.ms": 100000,
 }
 
 SENTRY_EVENTSTREAM = "sentry.eventstream.kafka.KafkaEventStream"
