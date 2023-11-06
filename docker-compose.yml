@@ -107,7 +107,7 @@ x-snuba-defaults: &snuba_defaults
   environment:
     SNUBA_SETTINGS: self_hosted
     CLICKHOUSE_HOST: clickhouse
-    DEFAULT_BROKERS: "localhost:9091"
+    DEFAULT_BROKERS: "kafka:9092"
     REDIS_HOST: redis
     UWSGI_MAX_REQUESTS: "10000"
     UWSGI_DISABLE_LOGGING: "true"
@@ -525,8 +525,8 @@ services:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
     environment:
-      SENTRY_KAFKA_BROKERS_PROFILING: "localhost:9091"
-      SENTRY_KAFKA_BROKERS_OCCURRENCES: "localhost:9091"
+      SENTRY_KAFKA_BROKERS_PROFILING: "kafka:9092"
+      SENTRY_KAFKA_BROKERS_OCCURRENCES: "kafka:9092"
       SENTRY_BUCKET_PROFILES: file://localhost//var/lib/sentry-profiles
       SENTRY_SNUBA_HOST: "http://snuba-api:1218"
     volumes:
