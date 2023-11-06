@@ -184,6 +184,8 @@ services:
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
       KAFKA_BROKER_ID: 1
+      KAFKA_JMX_PORT: 19101
+      KAFKA_JMX_HOSTNAME: localhost
     ulimits:
       nofile:
         soft: 4096
@@ -219,6 +221,8 @@ services:
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
       KAFKA_BROKER_ID: 2
+      KAFKA_JMX_PORT: 19102
+      KAFKA_JMX_HOSTNAME: localhost
     ulimits:
       nofile:
         soft: 4096
@@ -254,6 +258,8 @@ services:
       KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
       KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
       KAFKA_BROKER_ID: 3
+      KAFKA_JMX_PORT: 19103
+      KAFKA_JMX_HOSTNAME: localhost
     ulimits:
       nofile:
         soft: 4096
@@ -268,6 +274,26 @@ services:
       interval: 30s
       timeout: 90s
       retries: 30
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka
+      - kafka-2
+      - kafka-3
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 19091
+      KAFKA_CLUSTERS_1_NAME: kafka-2
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka-2:9092
+      KAFKA_CLUSTERS_1_METRICS_PORT: 19102
+      KAFKA_CLUSTERS_2_NAME: kafka-3
+      KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS: kafka-3:9092
+      KAFKA_CLUSTERS_2_METRICS_PORT: 19103
+      DYNAMIC_CONFIG_ENABLED: 'true'
   clickhouse:
     <<: *restart_policy
     image: clickhouse-self-hosted-local
