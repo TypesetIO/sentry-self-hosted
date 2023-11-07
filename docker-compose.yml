@@ -495,7 +495,7 @@ services:
       web:
         <<: *depends_on-healthy
     deploy:
-      replicas: 4
+      replicas: 12
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"

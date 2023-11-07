@@ -14,4 +14,4 @@ processing:
 limits:
   max_envelope_size: 250000000
   max_concurrent_queries: 50
-  max_concurrent_requests: 1000
+  max_concurrent_requests: 10000
