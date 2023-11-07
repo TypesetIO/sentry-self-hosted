@@ -363,8 +363,6 @@ services:
   snuba-transactions-consumer:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 2
   snuba-replays-consumer:
     <<: *snuba_defaults
     command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -395,8 +393,6 @@ services:
   snuba-subscription-consumer-transactions:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset transactions --entity transactions --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-transactions-subscriptions-consumers --followed-consumer-group=transactions_group --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
-    deploy:
-      replicas: 2
   snuba-subscription-consumer-metrics:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset metrics --entity metrics_sets --entity metrics_counters --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-metrics-subscriptions-consumers --followed-consumer-group=snuba-metrics-consumers --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
@@ -490,8 +486,6 @@ services:
   post-process-forwarder-transactions:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-transactions --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
-    deploy:
-      replicas: 2
   post-process-forwarder-issue-platform:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-issue-platform --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-generic-events-commit-log --synchronize-commit-group generic_events_group
@@ -554,7 +548,7 @@ services:
       web:
         <<: *depends_on-healthy
     deploy:
-      replicas: 5
+      replicas: 6
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
