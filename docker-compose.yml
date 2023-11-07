@@ -30,8 +30,6 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-healthy
     kafka-2:
       <<: *depends_on-healthy
-    kafka-3:
-      <<: *depends_on-healthy
     memcached:
       <<: *depends_on-default
     smtp:
@@ -98,8 +96,6 @@ x-snuba-defaults: &snuba_defaults
     kafka:
       <<: *depends_on-healthy
     kafka-2:
-      <<: *depends_on-healthy
-    kafka-3:
       <<: *depends_on-healthy
     redis:
       <<: *depends_on-healthy
@@ -241,45 +237,6 @@ services:
       interval: 30s
       timeout: 90s
       retries: 30
-  kafka-3:
-    <<: *restart_policy
-    ports:
-      - "19103:19103"
-    depends_on:
-      zookeeper:
-        <<: *depends_on-healthy
-    image: "confluentinc/cp-kafka:5.5.7"
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://localhost:9094"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "3"
-      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "5"
-      KAFKA_LOG_RETENTION_HOURS: "3"
-      KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
-      KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
-      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
-      KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
-      KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
-      KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
-      KAFKA_BROKER_ID: 3
-      KAFKA_JMX_PORT: 19103
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=19103
-    ulimits:
-      nofile:
-        soft: 4096
-        hard: 4096
-    volumes:
-      - "sentry-kafka-3:/var/lib/kafka/data"
-      - "sentry-kafka-log-3:/var/lib/kafka/log"
-      - "sentry-secrets:/etc/kafka/secrets"
-    healthcheck:
-      <<: *healthcheck_defaults
-      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-3:9092 --list"]
-      interval: 30s
-      timeout: 90s
-      retries: 30
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
@@ -288,7 +245,6 @@ services:
     depends_on:
       - kafka
       - kafka-2
-      - kafka-3
     environment:
       KAFKA_CLUSTERS_0_NAME: kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
@@ -296,9 +252,6 @@ services:
       KAFKA_CLUSTERS_1_NAME: kafka-2
       KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka-2:9092
       KAFKA_CLUSTERS_1_METRICS_PORT: 19102
-      KAFKA_CLUSTERS_2_NAME: kafka-3
-      KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS: kafka-3:9092
-      KAFKA_CLUSTERS_2_METRICS_PORT: 19103
       DYNAMIC_CONFIG_ENABLED: 'true'
   clickhouse:
     <<: *restart_policy
@@ -452,16 +405,12 @@ services:
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
-    deploy:
-      replicas: 2
   attachments-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-attachments --consumer-group ingest-consumer
   transactions-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
-    deploy:
-      replicas: 2
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
@@ -541,8 +490,6 @@ services:
         <<: *depends_on-healthy
       kafka-2:
         <<: *depends_on-healthy
-      kafka-3:
-        <<: *depends_on-healthy
       redis:
         <<: *depends_on-healthy
       web:
@@ -563,8 +510,6 @@ services:
       kafka:
         <<: *depends_on-healthy
       kafka-2:
-        <<: *depends_on-healthy
-      kafka-3:
         <<: *depends_on-healthy
   vroom-cleanup:
     <<: *restart_policy
@@ -593,8 +538,6 @@ volumes:
   sentry-kafka:
     external: true
   sentry-kafka-2:
-    external: true
-  sentry-kafka-3:
     external: true
   sentry-clickhouse:
     external: true
