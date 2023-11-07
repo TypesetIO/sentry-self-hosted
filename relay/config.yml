@@ -11,3 +11,7 @@ processing:
     - {name: "message.max.bytes", value: 250000000} # 50MB
   redis: redis://redis:6379
   geoip_path: "/geoip/GeoLite2-City.mmdb"
+limits:
+  max_envelope_size: 250000000
+  max_concurrent_queries: 50
+  max_concurrent_requests: 1000
