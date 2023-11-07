@@ -447,12 +447,12 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 6
+      replicas: 4
   save-event-transaction-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 6
+      replicas: 4
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
