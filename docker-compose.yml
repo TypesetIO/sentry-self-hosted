@@ -481,6 +481,7 @@ services:
         read_only: true
         source: ./geoip
         target: /geoip
+      - sentry-relay:/var/spool/sentry_relay/data
     depends_on:
       kafka:
         <<: *depends_on-healthy
@@ -489,9 +490,7 @@ services:
       redis:
         <<: *depends_on-healthy
       web:
-        <<: *depends_on-healthy
-    volumes:
-      - sentry-relay:/var/spool/sentry_relay/data
+        <<: *depends_on-healthy      
     deploy:
       replicas: 4
   vroom:
