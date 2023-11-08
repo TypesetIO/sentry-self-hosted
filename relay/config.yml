@@ -20,3 +20,5 @@ cache:
 spool:
   envelopes:
     path: /var/spool/sentry_relay/data
+    max_memory_size: 1GB
+    max_disk_size: 3GB
