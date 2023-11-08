@@ -19,4 +19,4 @@ cache:
   envelope_buffer_size: 100000
 spool:
   envelopes:
-    - path: /var/spool/sentry_relay/data
+    path: /var/spool/sentry_relay/data
