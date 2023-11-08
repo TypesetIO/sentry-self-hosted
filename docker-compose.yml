@@ -396,12 +396,12 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 2
+      replicas: 3
   save-event-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event
     deploy:
-      replicas: 2
+      replicas: 3
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
@@ -417,7 +417,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 5
+      replicas: 3
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
