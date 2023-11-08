@@ -490,6 +490,8 @@ services:
         <<: *depends_on-healthy
       web:
         <<: *depends_on-healthy
+    volumes:
+      - sentry-relay:/var/spool/sentry_relay/data
     deploy:
       replicas: 4
   vroom:
@@ -554,3 +556,4 @@ volumes:
   sentry-kafka-log-3:
   sentry-smtp-log:
   sentry-clickhouse-log:
+  sentry-relay:
