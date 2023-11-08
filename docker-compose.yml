@@ -401,7 +401,7 @@ services:
     <<: *sentry_defaults
     command: run worker -Q events.save_event
     deploy:
-      replicas: 3
+      replicas: 1
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
