@@ -395,31 +395,13 @@ services:
   worker:
     <<: *sentry_defaults
     command: run worker
-  save-event-worker:
-    <<: *sentry_defaults
-    command: run worker -Q events.save_event
     deploy:
-      replicas: 2
-  save-event-transaction-worker:
-    <<: *sentry_defaults
-    command: run worker -Q events.save_event_transaction
-    deploy:
-      replicas: 2
-  post-process-transactions-worker:
-    <<: *sentry_defaults
-    command: run worker -Q post_process_transactions
-    deploy:
-      replicas: 2
+      replicas: 5
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
     deploy:
       replicas: 4
-  relay-config-worker:
-    <<: *sentry_defaults
-    command: run worker -Q relay_config
-    deploy:
-      replicas: 2
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
