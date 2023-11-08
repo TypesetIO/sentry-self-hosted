@@ -19,7 +19,7 @@ limits:
   max_concurrent_queries: 50
   max_concurrent_requests: 10000
 cache:
-  envelope_buffer_size: 18000
+  envelope_buffer_size: 20000
 spool:
   envelopes:
     path: /var/tmp/sentry_relay_spool

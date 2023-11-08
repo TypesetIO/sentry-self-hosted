@@ -396,7 +396,7 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 6
+      replicas: 4
   save-event-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event
@@ -501,7 +501,7 @@ services:
       web:
         <<: *depends_on-healthy      
     deploy:
-      replicas: 3
+      replicas: 4
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
