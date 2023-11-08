@@ -17,8 +17,8 @@ limits:
   max_concurrent_requests: 10000
 cache:
   envelope_buffer_size: 100000
-spool:
-  envelopes:
-    path: /var/spool/sentry_relay/data
-    max_memory_size: 1GB
-    max_disk_size: 3GB
+# spool:
+#   envelopes:
+#     path: /var/spool/sentry_relay/data
+#     max_memory_size: 1GB
+#     max_disk_size: 3GB
