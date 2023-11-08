@@ -16,7 +16,6 @@ limits:
   max_concurrent_queries: 50
   max_concurrent_requests: 10000
 cache:
-  event_buffer_size: 100000
   envelope_buffer_size: 10000
 spool:
   envelopes:
