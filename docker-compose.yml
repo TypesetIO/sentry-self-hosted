@@ -481,10 +481,7 @@ services:
         read_only: true
         source: ./geoip
         target: /geoip
-      - type: bind
-        read_only: true
-        source: ./sentry-relay
-        target: /var/spool/sentry_relay/data
+      - sentry-relay:/var/spool/sentry_relay/data
     depends_on:
       kafka:
         <<: *depends_on-healthy
@@ -543,6 +540,8 @@ volumes:
     external: true
   sentry-symbolicator:
     external: true
+  sentry-relay:
+    external: true
   # This volume stores profiles and should be persisted.
   # Not being external will still persist data across restarts.
   # It won't persist if someone does a docker compose down -v.
@@ -555,6 +554,5 @@ volumes:
   sentry-zookeeper-log:
   sentry-kafka-log:
   sentry-kafka-log-2:
-  sentry-kafka-log-3:
   sentry-smtp-log:
   sentry-clickhouse-log:
