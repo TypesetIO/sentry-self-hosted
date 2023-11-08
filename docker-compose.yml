@@ -481,7 +481,10 @@ services:
         read_only: true
         source: ./geoip
         target: /geoip
-      - sentry-relay:/var/spool/sentry_relay/data
+      - type: bind
+        read_only: true
+        source: ./sentry-relay
+        target: /var/spool/sentry_relay/data
     depends_on:
       kafka:
         <<: *depends_on-healthy
@@ -555,4 +558,3 @@ volumes:
   sentry-kafka-log-3:
   sentry-smtp-log:
   sentry-clickhouse-log:
-  sentry-relay:
