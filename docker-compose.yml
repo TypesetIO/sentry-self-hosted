@@ -173,7 +173,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "2"
-      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "15"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "20"
       KAFKA_LOG_RETENTION_HOURS: "3"
       KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
       KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
@@ -212,7 +212,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "2"
-      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "15"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "20"
       KAFKA_LOG_RETENTION_HOURS: "3"
       KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
       KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
@@ -328,13 +328,17 @@ services:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 10
+      replicas: 15
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 5
   snuba-generic-metrics-counters-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_counters_raw --consumer-group snuba-gen-metrics-counters-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 5
   snuba-replacer:
     <<: *snuba_defaults
     command: replacer --storage errors --auto-offset-reset=latest --no-strict-offset-reset
@@ -412,12 +416,12 @@ services:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
     deploy:
-      replicas: 6
+      replicas: 5
   post-process--transactions-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
     deploy:
-      replicas: 6
+      replicas: 5
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
@@ -428,7 +432,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 24
+      replicas: 30
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
@@ -455,6 +459,8 @@ services:
   post-process-forwarder-transactions:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-transactions --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
+    deploy:
+      replicas: 5
   post-process-forwarder-issue-platform:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-issue-platform --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-generic-events-commit-log --synchronize-commit-group generic_events_group
@@ -516,7 +522,7 @@ services:
       web:
         <<: *depends_on-healthy      
     deploy:
-      replicas: 8
+      replicas: 7
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
