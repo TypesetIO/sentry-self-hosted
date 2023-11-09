@@ -28,6 +28,8 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-healthy
     kafka:
       <<: *depends_on-healthy
+    kafka-1:
+      <<: *depends_on-healthy
     memcached:
       <<: *depends_on-default
     smtp:
@@ -93,6 +95,8 @@ x-snuba-defaults: &snuba_defaults
       <<: *depends_on-healthy
     kafka:
       <<: *depends_on-healthy
+    kafka-1:
+      <<: *depends_on-healthy      
     redis:
       <<: *depends_on-healthy
   image: "$SNUBA_IMAGE"
@@ -168,7 +172,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9091"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "2"
       KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "15"
       KAFKA_LOG_RETENTION_HOURS: "3"
       KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
@@ -194,6 +198,45 @@ services:
       interval: 30s
       timeout: 90s
       retries: 30
+  kafka-1:
+    <<: *restart_policy
+    ports:
+      - "19102:19102"
+    depends_on:
+      zookeeper:
+        <<: *depends_on-healthy
+    image: "confluentinc/cp-kafka:5.5.7"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "2"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "15"
+      KAFKA_LOG_RETENTION_HOURS: "3"
+      KAFKA_MESSAGE_MAX_BYTES: "50000000" #50MB or bust
+      KAFKA_MAX_REQUEST_SIZE: "50000000" #50MB on requests apparently too
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_LOG4J_LOGGERS: "kafka.cluster=WARN,kafka.controller=WARN,kafka.coordinator=WARN,kafka.log=WARN,kafka.server=WARN,kafka.zookeeper=WARN,state.change.logger=WARN"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: "WARN"
+      KAFKA_BROKER_ID: 1
+      KAFKA_JMX_PORT: 19102
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=19102
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    volumes:
+      - "sentry-kafka-1:/var/lib/kafka/data"
+      - "sentry-kafka-log-1:/var/lib/kafka/log"
+      - "sentry-secrets:/etc/kafka/secrets"
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: ["CMD-SHELL", "/usr/bin/kafka-topics --bootstrap-server kafka-1:9092 --list"]
+      interval: 30s
+      timeout: 90s
+      retries: 30
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
@@ -205,6 +248,9 @@ services:
       KAFKA_CLUSTERS_0_NAME: kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_METRICS_PORT: 19101
+      KAFKA_CLUSTERS_1_NAME: kafka-1
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka-1:9092
+      KAFKA_CLUSTERS_1_METRICS_PORT: 19102
       DYNAMIC_CONFIG_ENABLED: 'true'
   clickhouse:
     <<: *restart_policy
@@ -282,7 +328,7 @@ services:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 5
+      replicas: 10
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -361,7 +407,7 @@ services:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 15
+      replicas: 20
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
@@ -382,7 +428,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 12
+      replicas: 20
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
@@ -390,7 +436,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-generic-metrics --consumer-group generic-metrics-consumer
     deploy:
-      replicas: 5
+      replicas: 10
   billing-metrics-consumer:
     <<: *sentry_defaults
     command: run consumer billing-metrics-consumer --consumer-group billing-metrics-consumer
@@ -463,6 +509,8 @@ services:
     depends_on:
       kafka:
         <<: *depends_on-healthy
+      kafka-1:
+        <<: *depends_on-healthy
       redis:
         <<: *depends_on-healthy
       web:
@@ -481,6 +529,8 @@ services:
       - sentry-vroom:/var/lib/sentry-profiles
     depends_on:
       kafka:
+        <<: *depends_on-healthy
+      kafka-1:
         <<: *depends_on-healthy
   vroom-cleanup:
     <<: *restart_policy
@@ -508,6 +558,8 @@ volumes:
     external: true
   sentry-kafka:
     external: true
+  sentry-kafka-1:
+    external: true
   sentry-clickhouse:
     external: true
   sentry-symbolicator:
@@ -525,6 +577,6 @@ volumes:
   sentry-nginx-cache:
   sentry-zookeeper-log:
   sentry-kafka-log:
-  sentry-kafka-log-2:
+  sentry-kafka-log-1:
   sentry-smtp-log:
   sentry-clickhouse-log:
