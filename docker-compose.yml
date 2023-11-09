@@ -349,27 +349,27 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 5
+      replicas: 8
   save-event-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event
     deploy:
-      replicas: 5
+      replicas: 8
   save-event-transaction-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 10
+      replicas: 15
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
     deploy:
-      replicas: 5
+      replicas: 8
   post-process--transactions-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
     deploy:
-      replicas: 5
+      replicas: 8
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
@@ -464,7 +464,7 @@ services:
       web:
         <<: *depends_on-healthy      
     deploy:
-      replicas: 5
+      replicas: 8
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
