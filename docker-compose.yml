@@ -281,6 +281,8 @@ services:
   snuba-generic-metrics-distributions-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 5
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -359,7 +361,7 @@ services:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 12
+      replicas: 15
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
@@ -380,7 +382,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 10
+      replicas: 12
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
