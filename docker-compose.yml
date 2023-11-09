@@ -380,7 +380,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 6
+      replicas: 5
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
