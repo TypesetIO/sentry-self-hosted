@@ -359,7 +359,7 @@ services:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 5
+      replicas: 6
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
