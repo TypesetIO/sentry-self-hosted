@@ -315,9 +315,11 @@ services:
   snuba-transactions-consumer:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-  snuba-replays-consumer:
-    <<: *snuba_defaults
-    command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
+    deploy:
+      replicas: 5
+  # snuba-replays-consumer:
+  #   <<: *snuba_defaults
+  #   command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
   snuba-issue-occurrence-consumer:
     <<: *snuba_defaults
     command: consumer --storage search_issues --consumer-group generic_events_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -328,17 +330,17 @@ services:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 20
+      replicas: 15
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 10
+      replicas: 5
   snuba-generic-metrics-counters-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_counters_raw --consumer-group snuba-gen-metrics-counters-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 10
+      replicas: 5
   snuba-replacer:
     <<: *snuba_defaults
     command: replacer --storage errors --auto-offset-reset=latest --no-strict-offset-reset
@@ -414,6 +416,8 @@ services:
   post-process--transactions-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
+    deploy:
+      replicas: 5
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
@@ -424,7 +428,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 100
+      replicas: 60
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
@@ -432,13 +436,13 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-generic-metrics --consumer-group generic-metrics-consumer
     deploy:
-      replicas: 20
-  billing-metrics-consumer:
-    <<: *sentry_defaults
-    command: run consumer billing-metrics-consumer --consumer-group billing-metrics-consumer
-  ingest-replay-recordings:
-    <<: *sentry_defaults
-    command: run consumer ingest-replay-recordings --consumer-group ingest-replay-recordings
+      replicas: 5
+  # billing-metrics-consumer:
+  #   <<: *sentry_defaults
+  #   command: run consumer billing-metrics-consumer --consumer-group billing-metrics-consumer
+  # ingest-replay-recordings:
+  #   <<: *sentry_defaults
+  #   command: run consumer ingest-replay-recordings --consumer-group ingest-replay-recordings
   ingest-occurrences:
     <<: *sentry_defaults
     command: run consumer ingest-occurrences --consumer-group ingest-occurrences
@@ -452,7 +456,7 @@ services:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-transactions --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
     deploy:
-      replicas: 10
+      replicas: 15
   post-process-forwarder-issue-platform:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-issue-platform --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-generic-events-commit-log --synchronize-commit-group generic_events_group
