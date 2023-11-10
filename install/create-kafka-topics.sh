@@ -8,13 +8,13 @@ KAFKA_TOPIC_WITH_LOW_PARTITION="ingest-attachments ingest-replay-recordings"
 NEEDED_KAFKA_TOPICS="profiles ingest-occurrences ingest-metrics ingest-performance-metrics"
 for topic in $NEEDED_KAFKA_TOPICS; do
   if ! echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 20
+    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 25
     echo ""
   fi
 done
 for topic in $KAFKA_TOPIC_WITH_LOW_PARTITION; do
   if ! echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 1
+    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 2
     echo ""
   fi
 done
@@ -27,7 +27,7 @@ done
 EXISTING_TOPICS_WITH_HIGH_PARTITION_NEEDS="outcomes snuba-generic-metrics transactions events"
 for topic in $EXISTING_TOPICS_WITH_HIGH_PARTITION_NEEDS; do
   if echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --partitions 30
+    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --partitions 50
     echo ""
   fi
 done

@@ -316,7 +316,7 @@ services:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 5
+      replicas: 20
   # snuba-replays-consumer:
   #   <<: *snuba_defaults
   #   command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -402,9 +402,13 @@ services:
   worker:
     <<: *sentry_defaults
     command: run worker
+    deploy:
+      replicas: 3
   save-event-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event
+    deploy:
+      replicas: 3
   save-event-transaction-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
@@ -417,7 +421,7 @@ services:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
     deploy:
-      replicas: 5
+      replicas: 10
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
@@ -428,7 +432,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
     deploy:
-      replicas: 60
+      replicas: 75
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
@@ -456,7 +460,7 @@ services:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-transactions --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
     deploy:
-      replicas: 15
+      replicas: 30
   post-process-forwarder-issue-platform:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-issue-platform --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-generic-events-commit-log --synchronize-commit-group generic_events_group
