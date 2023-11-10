@@ -8,13 +8,13 @@ KAFKA_TOPIC_WITH_LOW_PARTITION="ingest-attachments ingest-replay-recordings"
 NEEDED_KAFKA_TOPICS="profiles ingest-occurrences ingest-metrics ingest-performance-metrics"
 for topic in $NEEDED_KAFKA_TOPICS; do
   if ! echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 25
+    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 1 --partitions 25
     echo ""
   fi
 done
 for topic in $KAFKA_TOPIC_WITH_LOW_PARTITION; do
   if ! echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 2
+    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 1 --partitions 2
     echo ""
   fi
 done
