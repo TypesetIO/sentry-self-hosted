@@ -27,8 +27,7 @@ done
 EXISTING_TOPICS_WITH_HIGH_PARTITION_NEEDS="outcomes snuba-generic-metrics transactions events"
 for topic in $EXISTING_TOPICS_WITH_HIGH_PARTITION_NEEDS; do
   if echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --replication-factor 2
-    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --partitions 100
+    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --partitions 30
     echo ""
   fi
 done
