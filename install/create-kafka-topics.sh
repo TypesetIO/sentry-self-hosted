@@ -20,14 +20,14 @@ for topic in $KAFKA_TOPIC_WITH_LOW_PARTITION; do
 done
 for topic in $KAFKA_TOPIC_WITH_HIGH_PARTITION; do
   if ! echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 2 --partitions 100
+    $dcr kafka kafka-topics --create --topic $topic --zookeeper zookeeper:2181 --replication-factor 1 --partitions 100
     echo ""
   fi
 done
 EXISTING_TOPICS_WITH_HIGH_PARTITION_NEEDS="outcomes snuba-generic-metrics transactions events"
 for topic in $EXISTING_TOPICS_WITH_HIGH_PARTITION_NEEDS; do
   if echo "$EXISTING_KAFKA_TOPICS" | grep -qE "(^| )$topic( |$)"; then
-    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --partitions 50
+    $dcr kafka kafka-topics --alter --topic $topic --zookeeper zookeeper:2181 --partitions 60
     echo ""
   fi
 done
