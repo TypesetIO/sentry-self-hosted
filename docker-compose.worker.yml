@@ -1,3 +1,5 @@
+include:
+  - docker-compose.config.yml
 services:
   worker:
     <<: *sentry_defaults
