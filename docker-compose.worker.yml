@@ -88,6 +88,7 @@ x-sentry-defaults: &sentry_defaults
     - "./certificates:/usr/local/share/ca-certificates:ro"
   networks:
     - kafka-network
+    - sentry_network
 x-snuba-defaults: &snuba_defaults
   <<: *restart_policy
   depends_on:
@@ -110,6 +111,7 @@ x-snuba-defaults: &snuba_defaults
     SENTRY_EVENT_RETENTION_DAYS:
   networks:
     - kafka-network
+    - sentry_network
 services:
   worker:
     <<: *sentry_defaults
@@ -141,4 +143,7 @@ volumes:
 networks:
   kafka-network:
     name: kafka_network
+    external: true
+  sentry_network:
+    name: sentry_network
     external: true

@@ -392,3 +392,6 @@ networks:
   kafka-network:
     name: kafka_network
     external: true
+  sentry-network:
+    name: sentry_network
+    driver: bridge
