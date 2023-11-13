@@ -393,4 +393,5 @@ networks:
     name: kafka_network
     external: true
   sentry-network:
+    external: false
     name: sentry_network
