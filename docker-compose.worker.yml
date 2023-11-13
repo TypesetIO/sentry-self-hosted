@@ -32,26 +32,19 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-default
     snuba-api:
       <<: *depends_on-default
-    snuba-consumer:
-      <<: *depends_on-default
-    snuba-outcomes-consumer:
-      <<: *depends_on-default
-    snuba-sessions-consumer:
-      <<: *depends_on-default
-    snuba-transactions-consumer:
-      <<: *depends_on-default
-    snuba-subscription-consumer-events:
-      <<: *depends_on-default
-    snuba-subscription-consumer-transactions:
-      <<: *depends_on-default
-    snuba-replacer:
-      <<: *depends_on-default
     symbolicator:
       <<: *depends_on-default
     vroom:
       <<: *depends_on-default
   external_links:
     - kafka
+    - snuba-consumer
+    - snuba-outcomes-consumer
+    - snuba-sessions-consumer
+    - snuba-transactions-consumer
+    - snuba-subscription-consumer-events
+    - snuba-subscription-consumer-transactions
+    - snuba-replacer
   entrypoint: "/etc/sentry/entrypoint.sh"
   command: ["run", "web"]
   environment:
@@ -86,9 +79,6 @@ x-sentry-defaults: &sentry_defaults
     - "./sentry:/etc/sentry"
     - "./geoip:/geoip:ro"
     - "./certificates:/usr/local/share/ca-certificates:ro"
-  networks:
-    - kafka-network
-    - sentry_network
 x-snuba-defaults: &snuba_defaults
   <<: *restart_policy
   depends_on:
@@ -109,9 +99,6 @@ x-snuba-defaults: &snuba_defaults
     # Leaving the value empty to just pass whatever is set
     # on the host system (or in the .env file)
     SENTRY_EVENT_RETENTION_DAYS:
-  networks:
-    - kafka-network
-    - sentry_network
 services:
   worker:
     <<: *sentry_defaults
