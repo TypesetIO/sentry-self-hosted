@@ -109,7 +109,7 @@ services:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 30
+      replicas: 20
   # snuba-replays-consumer:
   #   <<: *snuba_defaults
   #   command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -123,17 +123,17 @@ services:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 20
+      replicas: 15
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 10
+      replicas: 8
   snuba-generic-metrics-counters-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_counters_raw --consumer-group snuba-gen-metrics-counters-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 10
+      replicas: 7
   snuba-replacer:
     <<: *snuba_defaults
     command: replacer --storage errors --auto-offset-reset=latest --no-strict-offset-reset
