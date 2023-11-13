@@ -26,8 +26,6 @@ x-sentry-defaults: &sentry_defaults
   depends_on:
     redis:
       <<: *depends_on-healthy
-    kafka:
-      <<: *depends_on-healthy
     memcached:
       <<: *depends_on-default
     smtp:
@@ -52,6 +50,8 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-default
     vroom:
       <<: *depends_on-default
+  external_links:
+    - kafka
   entrypoint: "/etc/sentry/entrypoint.sh"
   command: ["run", "web"]
   environment:
@@ -93,10 +93,10 @@ x-snuba-defaults: &snuba_defaults
   depends_on:
     clickhouse:
       <<: *depends_on-healthy
-    kafka:
-      <<: *depends_on-healthy
     redis:
       <<: *depends_on-healthy
+  external_links:
+    - kafka
   image: "$SNUBA_IMAGE"
   environment:
     SNUBA_SETTINGS: self_hosted
