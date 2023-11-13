@@ -23,19 +23,6 @@ x-sentry-defaults: &sentry_defaults
     context: ./sentry
     args:
       - SENTRY_IMAGE
-  depends_on:
-    redis:
-      <<: *depends_on-healthy
-    memcached:
-      <<: *depends_on-default
-    smtp:
-      <<: *depends_on-default
-    snuba-api:
-      <<: *depends_on-default
-    symbolicator:
-      <<: *depends_on-default
-    vroom:
-      <<: *depends_on-default
   external_links:
     - kafka
     - snuba-consumer
@@ -45,6 +32,12 @@ x-sentry-defaults: &sentry_defaults
     - snuba-subscription-consumer-events
     - snuba-subscription-consumer-transactions
     - snuba-replacer
+    - redis
+    - memcached
+    - smtp
+    - snuba-api
+    - symbolicator
+    - vroom
   entrypoint: "/etc/sentry/entrypoint.sh"
   command: ["run", "web"]
   environment:
@@ -81,13 +74,10 @@ x-sentry-defaults: &sentry_defaults
     - "./certificates:/usr/local/share/ca-certificates:ro"
 x-snuba-defaults: &snuba_defaults
   <<: *restart_policy
-  depends_on:
-    clickhouse:
-      <<: *depends_on-healthy
-    redis:
-      <<: *depends_on-healthy
   external_links:
     - kafka
+    - redis
+    - clickhouse
   image: "$SNUBA_IMAGE"
   environment:
     SNUBA_SETTINGS: self_hosted
