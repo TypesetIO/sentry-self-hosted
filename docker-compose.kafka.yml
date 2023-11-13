@@ -1,3 +1,5 @@
+x-restart-policy: &restart_policy
+  restart: unless-stopped
 services:
   zookeeper:
     <<: *restart_policy
