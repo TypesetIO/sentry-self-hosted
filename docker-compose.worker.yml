@@ -141,4 +141,4 @@ volumes:
 networks:
   kafka-network:
     name: kafka_network
-    external: tru
+    external: true
