@@ -1,5 +1,19 @@
 x-restart-policy: &restart_policy
   restart: unless-stopped
+x-depends_on-healthy: &depends_on-healthy
+  condition: service_healthy
+x-depends_on-default: &depends_on-default
+  condition: service_started
+x-healthcheck-defaults: &healthcheck_defaults
+  # Avoid setting the interval too small, as docker uses much more CPU than one would expect.
+  # Related issues:
+  # https://github.com/moby/moby/issues/39102
+  # https://github.com/moby/moby/issues/39388
+  # https://github.com/getsentry/self-hosted/issues/1000
+  interval: "$HEALTHCHECK_INTERVAL"
+  timeout: "$HEALTHCHECK_TIMEOUT"
+  retries: $HEALTHCHECK_RETRIES
+  start_period: 10s
 services:
   zookeeper:
     <<: *restart_policy
