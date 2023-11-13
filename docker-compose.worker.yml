@@ -140,10 +140,3 @@ volumes:
   # These store application data that should persist across restarts.
   sentry-data:
     external: true
-networks:
-  kafka-network:
-    name: kafka_network
-    external: true
-  sentry_network:
-    name: sentry_network
-    external: true

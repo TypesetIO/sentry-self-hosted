@@ -95,7 +95,3 @@ volumes:
   sentry-zookeeper-log:
   sentry-kafka-log:
   sentry-secrets:
-networks:
-  kafka-network:
-    name: kafka_network
-    external: false

@@ -86,8 +86,6 @@ x-sentry-defaults: &sentry_defaults
     - "./sentry:/etc/sentry"
     - "./geoip:/geoip:ro"
     - "./certificates:/usr/local/share/ca-certificates:ro"
-  networks:
-    - kafka-network
 x-snuba-defaults: &snuba_defaults
   <<: *restart_policy
   depends_on:
@@ -108,8 +106,6 @@ x-snuba-defaults: &snuba_defaults
     # Leaving the value empty to just pass whatever is set
     # on the host system (or in the .env file)
     SENTRY_EVENT_RETENTION_DAYS:
-  networks:
-    - kafka-network
 services:
   smtp:
     <<: *restart_policy
@@ -334,8 +330,6 @@ services:
       - kafka
     deploy:
       replicas: 4
-    networks:
-      - kafka-network
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
@@ -348,8 +342,6 @@ services:
       - sentry-vroom:/var/lib/sentry-profiles
     external_links:
       - kafka
-    networks:
-      - kafka-network
   vroom-cleanup:
     <<: *restart_policy
     image: vroom-cleanup-self-hosted-local
@@ -388,10 +380,3 @@ volumes:
   sentry-nginx-cache:
   sentry-smtp-log:
   sentry-clickhouse-log:
-networks:
-  kafka-network:
-    name: kafka_network
-    external: true
-  sentry-network:
-    external: false
-    name: sentry_network
