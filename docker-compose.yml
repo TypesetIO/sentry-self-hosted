@@ -464,7 +464,6 @@ volumes:
   sentry-vroom:
   # These store ephemeral data that needn't persist across restarts.
   # That said, volumes will be persisted across restarts until they are deleted.
-  sentry-secrets:
   sentry-smtp:
   sentry-nginx-cache:
   sentry-smtp-log:

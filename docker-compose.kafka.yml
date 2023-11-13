@@ -94,6 +94,7 @@ volumes:
     external: true
   sentry-zookeeper-log:
   sentry-kafka-log:
+  sentry-secrets:
 networks:
   kafka-network:
     driver: bridge
