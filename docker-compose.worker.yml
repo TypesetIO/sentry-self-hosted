@@ -1,0 +1,24 @@
+services:
+  worker:
+    <<: *sentry_defaults
+    command: run worker
+    deploy:
+      replicas: 4
+  save-event-worker:
+    <<: *sentry_defaults
+    command: run worker -Q events.save_event
+    deploy:
+      replicas: 4
+  save-event-transaction-worker:
+    <<: *sentry_defaults
+    command: run worker -Q events.save_event_transaction
+    deploy:
+      replicas: 30
+  post-process-errors-worker:
+    <<: *sentry_defaults
+    command: run worker -Q post_process_errors
+  post-process--transactions-worker:
+    <<: *sentry_defaults
+    command: run worker -Q post_process_transactions
+    deploy:
+      replicas: 10
