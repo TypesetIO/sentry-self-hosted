@@ -97,5 +97,4 @@ volumes:
   sentry-secrets:
 networks:
   kafka-network:
-    driver: bridge
     name: kafka_network

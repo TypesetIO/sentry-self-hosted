@@ -394,4 +394,3 @@ networks:
     external: true
   sentry-network:
     name: sentry_network
-    driver: bridge
