@@ -146,3 +146,7 @@ services:
   subscription-consumer-generic-metrics:
     <<: *sentry_defaults
     command: run consumer generic-metrics-subscription-results --consumer-group query-subscription-consumer
+volumes:
+  # These store application data that should persist across restarts.
+  sentry-data:
+    external: true
