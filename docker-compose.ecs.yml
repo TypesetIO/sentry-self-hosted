@@ -1,3 +1,5 @@
+x-aws-vpc: "vpc-c2109ea6"
+x-aws-cluster: "sentry-self-host"
 x-restart-policy: &restart_policy
   restart: unless-stopped
 x-depends_on-healthy: &depends_on-healthy
