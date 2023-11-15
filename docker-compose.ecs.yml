@@ -1,4 +1,4 @@
-x-aws-vpc: "vpc-c2109ea6"
+x-aws-cluster: "sentry-self-host"
 x-restart-policy: &restart_policy
   restart: unless-stopped
 x-depends_on-healthy: &depends_on-healthy
@@ -491,7 +491,7 @@ services:
   nginx:
     <<: *restart_policy
     ports:
-      - "$SENTRY_BIND:80/tcp"
+      - "80:80"
     image: "nginx:1.25.1-alpine"
     # volumes:
     #   - type: bind
