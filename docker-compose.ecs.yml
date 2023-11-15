@@ -272,11 +272,11 @@ services:
   snuba-transactions-consumer:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '8'
-    #       memory: 16Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+          memory: 16Gb
   # snuba-replays-consumer:
   #   <<: *snuba_defaults
   #   command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -289,49 +289,49 @@ services:
   snuba-generic-metrics-distributions-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   snuba-generic-metrics-counters-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_counters_raw --consumer-group snuba-gen-metrics-counters-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   snuba-replacer:
     <<: *snuba_defaults
     command: replacer --storage errors --auto-offset-reset=latest --no-strict-offset-reset
   snuba-subscription-consumer-events:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset events --entity events --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-events-subscriptions-consumers --followed-consumer-group=snuba-consumers --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '2'
-    #       memory: 4Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4Gb
   snuba-subscription-consumer-sessions:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset sessions --entity sessions --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-sessions-subscriptions-consumers --followed-consumer-group=sessions-group --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
   snuba-subscription-consumer-transactions:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset transactions --entity transactions --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-transactions-subscriptions-consumers --followed-consumer-group=transactions_group --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '2'
-    #       memory: 4Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4Gb
   snuba-subscription-consumer-metrics:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset metrics --entity metrics_sets --entity metrics_counters --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-metrics-subscriptions-consumers --followed-consumer-group=snuba-metrics-consumers --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
@@ -381,38 +381,38 @@ services:
   worker:
     <<: *sentry_defaults
     command: run worker
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   save-event-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   save-event-transaction-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '16'
-    #       memory: 64Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '16'
+          memory: 64Gb
   post-process-errors-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_errors
   post-process--transactions-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '2'
-    #       memory: 4Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4Gb
   events-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-events --consumer-group ingest-consumer
@@ -422,22 +422,22 @@ services:
   transactions-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-transactions --consumer-group ingest-consumer
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-metrics --consumer-group metrics-consumer
   generic-metrics-consumer:
     <<: *sentry_defaults
     command: run consumer ingest-generic-metrics --consumer-group generic-metrics-consumer
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   # billing-metrics-consumer:
   #   <<: *sentry_defaults
   #   command: run consumer billing-metrics-consumer --consumer-group billing-metrics-consumer
@@ -453,19 +453,19 @@ services:
   post-process-forwarder-errors:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-errors --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-commit-log --synchronize-commit-group=snuba-consumers
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 8Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   post-process-forwarder-transactions:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-transactions --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '4'
-    #       memory: 16Gb
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 16Gb
   post-process-forwarder-issue-platform:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-issue-platform --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-generic-events-commit-log --synchronize-commit-group generic_events_group
