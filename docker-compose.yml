@@ -208,7 +208,7 @@ services:
       DYNAMIC_CONFIG_ENABLED: 'true'
   clickhouse:
     <<: *restart_policy
-    image: clickhouse-self-hosted-local
+    image: 083388942401.dkr.ecr.us-west-2.amazonaws.com/clickhouse-self-hosted
     build:
       context: ./clickhouse
       args:
