@@ -16,7 +16,7 @@ x-healthcheck-defaults: &healthcheck_defaults
   start_period: 10s
 x-sentry-defaults: &sentry_defaults
   <<: *restart_policy
-  image: sentry-self-hosted-local
+  image: 083388942401.dkr.ecr.us-west-2.amazonaws.com/sentry-self-host
   # Set the platform to build for linux/arm64 when needed on Apple silicon Macs.
   platform: ${DOCKER_PLATFORM:-}
   build:
@@ -320,7 +320,7 @@ services:
     command: run -c /etc/symbolicator/config.yml
   symbolicator-cleanup:
     <<: *restart_policy
-    image: symbolicator-cleanup-self-hosted-local
+    image: 083388942401.dkr.ecr.us-west-2.amazonaws.com/symbolicator-cleanup-self-hosted
     build:
       context: ./cron
       args:
@@ -410,11 +410,11 @@ services:
     command: run consumer generic-metrics-subscription-results --consumer-group query-subscription-consumer
   sentry-cleanup:
     <<: *sentry_defaults
-    image: sentry-cleanup-self-hosted-local
+    image: 083388942401.dkr.ecr.us-west-2.amazonaws.com/sentry-cleanup-self-hosted
     build:
       context: ./cron
       args:
-        BASE_IMAGE: sentry-self-hosted-local
+        BASE_IMAGE: 083388942401.dkr.ecr.us-west-2.amazonaws.com/sentry-self-host
     entrypoint: "/entrypoint.sh"
     command: '"0 0 * * * gosu sentry sentry cleanup --days $SENTRY_EVENT_RETENTION_DAYS"'
   nginx:
@@ -466,7 +466,7 @@ services:
         <<: *depends_on-healthy
   vroom-cleanup:
     <<: *restart_policy
-    image: vroom-cleanup-self-hosted-local
+    image: 083388942401.dkr.ecr.us-west-2.amazonaws.com/vroom-cleanup-self-hosted
     build:
       context: ./cron
       args:
