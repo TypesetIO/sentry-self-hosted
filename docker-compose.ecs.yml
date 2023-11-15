@@ -1,3 +1,4 @@
+x-aws-region: "us-west-2"
 x-aws-vpc: "vpc-c2109ea6"
 x-aws-cluster: "sentry-self-host"
 x-restart-policy: &restart_policy
@@ -586,4 +587,4 @@ services:
 networks:
   default:
     external: true
-    name: sg-0f33ca172c53a43b0
+    name: ProductionSentrySelfHostedSG
