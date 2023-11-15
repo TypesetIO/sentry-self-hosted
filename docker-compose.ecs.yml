@@ -1,6 +1,6 @@
-x-aws-region: "us-west-2"
-x-aws-vpc: "vpc-c2109ea6"
-x-aws-cluster: "sentry-self-host"
+# x-aws-region: "us-west-2"
+# x-aws-vpc: "vpc-c2109ea6"
+# x-aws-cluster: "sentry-self-host"
 x-restart-policy: &restart_policy
   restart: unless-stopped
 x-depends_on-healthy: &depends_on-healthy
@@ -584,7 +584,7 @@ services:
 #   sentry-kafka-log:
 #   sentry-smtp-log:
 #   sentry-clickhouse-log:
-networks:
-  default:
-    external: true
-    name: ProductionSentrySelfHostedSG
+# networks:
+#   default:
+#     external: true
+#     name: ProductionSentrySelfHostedSG
