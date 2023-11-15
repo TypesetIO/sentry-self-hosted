@@ -1,3 +1,4 @@
+x-aws-vpc: "vpc-c2109ea6"
 x-restart-policy: &restart_policy
   restart: unless-stopped
 x-depends_on-healthy: &depends_on-healthy
@@ -17,6 +18,7 @@ x-healthcheck-defaults: &healthcheck_defaults
 x-sentry-defaults: &sentry_defaults
   <<: *restart_policy
   image: sentry-self-hosted-local
+  x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
   # Set the platform to build for linux/arm64 when needed on Apple silicon Macs.
   platform: ${DOCKER_PLATFORM:-}
   build:
@@ -96,6 +98,7 @@ x-snuba-defaults: &snuba_defaults
     redis:
       <<: *depends_on-healthy
   image: "$SNUBA_IMAGE"
+  x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
   environment:
     SNUBA_SETTINGS: self_hosted
     CLICKHOUSE_HOST: clickhouse
@@ -110,6 +113,7 @@ services:
   smtp:
     <<: *restart_policy
     image: tianon/exim4
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     hostname: "${SENTRY_MAIL_HOST:-}"
     volumes:
       - "sentry-smtp:/var/spool/exim4"
@@ -117,6 +121,7 @@ services:
   memcached:
     <<: *restart_policy
     image: "memcached:1.6.21-alpine"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     command: ["-I", "${SENTRY_MAX_EXTERNAL_SOURCEMAP_SIZE:-1M}"]
     healthcheck:
       <<: *healthcheck_defaults
@@ -125,6 +130,7 @@ services:
   redis:
     <<: *restart_policy
     image: "redis:6.2.12-alpine"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     healthcheck:
       <<: *healthcheck_defaults
       test: redis-cli ping
@@ -137,6 +143,7 @@ services:
   zookeeper:
     <<: *restart_policy
     image: "confluentinc/cp-zookeeper:5.5.7"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     environment:
       ZOOKEEPER_CLIENT_PORT: "2181"
       CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
@@ -163,6 +170,7 @@ services:
       zookeeper:
         <<: *depends_on-healthy
     image: "confluentinc/cp-kafka:5.5.7"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9091"
@@ -197,6 +205,7 @@ services:
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     ports:
       - 8080:8080
     depends_on:
@@ -209,6 +218,7 @@ services:
   clickhouse:
     <<: *restart_policy
     image: clickhouse-self-hosted-local
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     build:
       context: ./clickhouse
       args:
@@ -242,6 +252,7 @@ services:
       retries: 30
   geoipupdate:
     image: "maxmindinc/geoipupdate:v6.0.0"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     # Override the entrypoint in order to avoid using envvars for config.
     # Futz with settings so we can keep mmdb and conf in same dir on host
     # (image looks for them in separate dirs by default).
@@ -341,6 +352,7 @@ services:
   symbolicator:
     <<: *restart_policy
     image: "$SYMBOLICATOR_IMAGE"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     volumes:
       - "sentry-symbolicator:/data"
       - type: bind
@@ -351,6 +363,7 @@ services:
   symbolicator-cleanup:
     <<: *restart_policy
     image: symbolicator-cleanup-self-hosted-local
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     build:
       context: ./cron
       args:
@@ -481,6 +494,7 @@ services:
   sentry-cleanup:
     <<: *sentry_defaults
     image: sentry-cleanup-self-hosted-local
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     build:
       context: ./cron
       args:
@@ -492,6 +506,7 @@ services:
     ports:
       - "$SENTRY_BIND:80/tcp"
     image: "nginx:1.25.1-alpine"
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     volumes:
       - type: bind
         read_only: true
@@ -539,6 +554,7 @@ services:
   vroom-cleanup:
     <<: *restart_policy
     image: vroom-cleanup-self-hosted-local
+    x-aws-pull_credentials: "arn:aws:secretsmanager:eu-west-3:12345:secret:DockerHubAccessToken"
     build:
       context: ./cron
       args:
