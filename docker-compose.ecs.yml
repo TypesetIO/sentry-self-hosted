@@ -553,35 +553,35 @@ services:
     volumes:
       - sentry-vroom:/var/lib/sentry-profiles
 
-volumes:
-  # These store application data that should persist across restarts.
-  sentry-data:
-    external: true
-  sentry-redis:
-    external: true
-  sentry-zookeeper:
-    external: true
-  sentry-kafka:
-    external: true
-  sentry-clickhouse:
-    external: true
-  sentry-symbolicator:
-    external: true
-  sentry-relay:
-    external: true
-  # This volume stores profiles and should be persisted.
-  # Not being external will still persist data across restarts.
-  # It won't persist if someone does a docker compose down -v.
-  sentry-vroom:
-  # These store ephemeral data that needn't persist across restarts.
-  # That said, volumes will be persisted across restarts until they are deleted.
-  sentry-secrets:
-  sentry-smtp:
-  sentry-nginx-cache:
-  sentry-zookeeper-log:
-  sentry-kafka-log:
-  sentry-smtp-log:
-  sentry-clickhouse-log:
+# volumes:
+#   # These store application data that should persist across restarts.
+#   sentry-data:
+#     external: true
+#   sentry-redis:
+#     external: true
+#   sentry-zookeeper:
+#     external: true
+#   sentry-kafka:
+#     external: true
+#   sentry-clickhouse:
+#     external: true
+#   sentry-symbolicator:
+#     external: true
+#   sentry-relay:
+#     external: true
+#   # This volume stores profiles and should be persisted.
+#   # Not being external will still persist data across restarts.
+#   # It won't persist if someone does a docker compose down -v.
+#   sentry-vroom:
+#   # These store ephemeral data that needn't persist across restarts.
+#   # That said, volumes will be persisted across restarts until they are deleted.
+#   sentry-secrets:
+#   sentry-smtp:
+#   sentry-nginx-cache:
+#   sentry-zookeeper-log:
+#   sentry-kafka-log:
+#   sentry-smtp-log:
+#   sentry-clickhouse-log:
 networks:
   default:
     external: true
