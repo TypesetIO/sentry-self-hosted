@@ -83,7 +83,7 @@ SENTRY_OPTIONS["system.event-retention-days"] = int(
 
 SENTRY_OPTIONS["redis.clusters"] = {
     "default": {
-        "hosts": {0: {"host": "redis", "password": "", "port": "6379", "db": "0"}}
+        "hosts": {0: {"host": "https://sentry.typeset.io", "password": "", "port": "6379", "db": "0"}}
     }
 }
 
