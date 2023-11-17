@@ -118,6 +118,8 @@ services:
   redis:
     <<: *restart_policy
     image: "redis:6.2.12-alpine"
+    ports:
+      - 6379:6379
     healthcheck:
       <<: *healthcheck_defaults
       test: redis-cli ping
