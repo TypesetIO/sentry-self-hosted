@@ -32,7 +32,7 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-default
     smtp:
       <<: *depends_on-default
-    :
+    snuba-api:
       <<: *depends_on-default
     snuba-consumer:
       <<: *depends_on-default
