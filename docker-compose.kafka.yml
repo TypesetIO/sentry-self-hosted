@@ -40,7 +40,7 @@ services:
     <<: *restart_policy
     ports:
       - 19101:19101
-      - 9092:9092
+      - 9091:9091
     depends_on:
       zookeeper:
         <<: *depends_on-healthy
