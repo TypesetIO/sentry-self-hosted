@@ -83,7 +83,7 @@ SENTRY_OPTIONS["system.event-retention-days"] = int(
 
 SENTRY_OPTIONS["redis.clusters"] = {
     "default": {
-        "hosts": {0: {"host": env("SENTRY_MAIN_ENDPOINT", "redis"), "password": "", "port": "6379", "db": "0"}}
+        "hosts": {0: {"host": os.environ.get("SENTRY_MAIN_ENDPOINT", "redis"), "password": "", "port": "6379", "db": "0"}}
     }
 }
 
