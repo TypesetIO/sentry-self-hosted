@@ -14,75 +14,13 @@ x-healthcheck-defaults: &healthcheck_defaults
   timeout: "$HEALTHCHECK_TIMEOUT"
   retries: $HEALTHCHECK_RETRIES
   start_period: 10s
-x-sentry-defaults: &sentry_defaults
-  <<: *restart_policy
-  image: sentry-self-hosted-local
-  # Set the platform to build for linux/arm64 when needed on Apple silicon Macs.
-  platform: ${DOCKER_PLATFORM:-}
-  build:
-    context: ./sentry
-    args:
-      - SENTRY_IMAGE
-  external_links:
-    - kafka
-    - snuba-consumer
-    - snuba-outcomes-consumer
-    - snuba-sessions-consumer
-    - snuba-transactions-consumer
-    - snuba-subscription-consumer-events
-    - snuba-subscription-consumer-transactions
-    - snuba-replacer
-    - redis
-    - memcached
-    - smtp
-    - snuba-api
-    - symbolicator
-    - vroom
-  entrypoint: "/etc/sentry/entrypoint.sh"
-  command: ["run", "web"]
-  environment:
-    PYTHONUSERBASE: "/data/custom-packages"
-    SENTRY_CONF: "/etc/sentry"
-    SNUBA: "http://snuba-api:1218"
-    VROOM: "http://vroom:8085"
-    # Force everything to use the system CA bundle
-    # This is mostly needed to support installing custom CA certs
-    # This one is used by botocore
-    DEFAULT_CA_BUNDLE: &ca_bundle "/etc/ssl/certs/ca-certificates.crt"
-    # This one is used by requests
-    REQUESTS_CA_BUNDLE: *ca_bundle
-    # This one is used by grpc/google modules
-    GRPC_DEFAULT_SSL_ROOTS_FILE_PATH_ENV_VAR: *ca_bundle
-    # Leaving the value empty to just pass whatever is set
-    # on the host system (or in the .env file)
-    SENTRY_EVENT_RETENTION_DAYS:
-    SENTRY_MAIL_HOST:
-    SENTRY_MAX_EXTERNAL_SOURCEMAP_SIZE:
-    # Set this value if you plan on using the Suggested Fix Feature
-    OPENAI_API_KEY:
-    RABBITMQ_HOST: "$RABBITMQ_HOST"
-    RABBITMQ_USERNAME: "$RABBITMQ_USERNAME"
-    RABBITMQ_PASSWORD: "$RABBITMQ_PASSWORD"
-    POSTGRESQL_DB_NAME: "$POSTGRESQL_DB_NAME"
-    POSTGRESQL_USER: "$POSTGRESQL_USER"
-    POSTGRESQL_PASSWORD: "$POSTGRESQL_PASSWORD"
-    POSTGRESQL_HOST: "$POSTGRESQL_HOST"
-  volumes:
-    - "sentry-data:/data"
-    - "./sentry:/etc/sentry"
-    - "./geoip:/geoip:ro"
-    - "./certificates:/usr/local/share/ca-certificates:ro"
 x-snuba-defaults: &snuba_defaults
   <<: *restart_policy
-  external_links:
-    - kafka
-    - redis
-    - clickhouse
   image: "$SNUBA_IMAGE"
   environment:
     SNUBA_SETTINGS: self_hosted
     CLICKHOUSE_HOST: clickhouse
-    DEFAULT_BROKERS: "kafka:9092"
+    DEFAULT_BROKERS: "https://sentry.typeset.io:9092"
     REDIS_HOST: redis
     UWSGI_MAX_REQUESTS: "10000"
     UWSGI_DISABLE_LOGGING: "true"
@@ -108,8 +46,8 @@ services:
   snuba-transactions-consumer:
     <<: *snuba_defaults
     command: consumer --storage transactions --consumer-group transactions_group --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 20
+    # deploy:
+    #   replicas: 20
   # snuba-replays-consumer:
   #   <<: *snuba_defaults
   #   command: consumer --storage replays --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
@@ -122,34 +60,34 @@ services:
   snuba-generic-metrics-distributions-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 15
+    # deploy:
+    #   replicas: 15
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 8
+    # deploy:
+    #   replicas: 8
   snuba-generic-metrics-counters-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_counters_raw --consumer-group snuba-gen-metrics-counters-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
-    deploy:
-      replicas: 7
+    # deploy:
+    #   replicas: 7
   snuba-replacer:
     <<: *snuba_defaults
     command: replacer --storage errors --auto-offset-reset=latest --no-strict-offset-reset
   snuba-subscription-consumer-events:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset events --entity events --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-events-subscriptions-consumers --followed-consumer-group=snuba-consumers --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
-    deploy:
-      replicas: 5
+    # deploy:
+    #   replicas: 5
   snuba-subscription-consumer-sessions:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset sessions --entity sessions --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-sessions-subscriptions-consumers --followed-consumer-group=sessions-group --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
   snuba-subscription-consumer-transactions:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset transactions --entity transactions --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-transactions-subscriptions-consumers --followed-consumer-group=transactions_group --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
-    deploy:
-      replicas: 5
+    # deploy:
+    #   replicas: 5
   snuba-subscription-consumer-metrics:
     <<: *snuba_defaults
     command: subscriptions-scheduler-executor --dataset metrics --entity metrics_sets --entity metrics_counters --auto-offset-reset=latest --no-strict-offset-reset --consumer-group=snuba-metrics-subscriptions-consumers --followed-consumer-group=snuba-metrics-consumers --delay-seconds=60 --schedule-ttl=60 --stale-threshold-seconds=900
