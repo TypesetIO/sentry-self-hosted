@@ -5,7 +5,7 @@ source install/_lib.sh
 source install/dc-detect-version.sh
 
 echo "${_group}Setting up variables and helpers ..."
-export SENTRY_TEST_HOST="${SENTRY_TEST_HOST:-https://sentry.typeset.io/}"
+export SENTRY_TEST_HOST="${SENTRY_TEST_HOST:-$SENTRY_MAIN_ENDPOINT/}"
 TEST_USER='test@example.com'
 TEST_PASS='test123TEST'
 COOKIE_FILE=$(mktemp)

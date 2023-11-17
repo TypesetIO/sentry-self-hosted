@@ -83,7 +83,7 @@ SENTRY_OPTIONS["system.event-retention-days"] = int(
 
 SENTRY_OPTIONS["redis.clusters"] = {
     "default": {
-        "hosts": {0: {"host": "sentry.typeset.io", "password": "", "port": "6379", "db": "0"}}
+        "hosts": {0: {"host": env("SENTRY_MAIN_ENDPOINT", "redis"), "password": "", "port": "6379", "db": "0"}}
     }
 }
 
@@ -130,7 +130,7 @@ CACHES = {
 SENTRY_CACHE = "sentry.cache.redis.RedisCache"
 
 DEFAULT_KAFKA_OPTIONS = {
-    "bootstrap.servers": "https://sentry.typeset.io:9092",
+    "bootstrap.servers": "$SENTRY_MAIN_ENDPOINT:9092",
     "message.max.bytes": 50000000,
     "socket.timeout.ms": 100000,
 }

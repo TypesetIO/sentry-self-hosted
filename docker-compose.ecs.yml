@@ -60,8 +60,8 @@ x-sentry-defaults: &sentry_defaults
   environment:
     PYTHONUSERBASE: "/data/custom-packages"
     SENTRY_CONF: "/etc/sentry"
-    SNUBA: "https://sentry.typeset.io:1218"
-    VROOM: "https://sentry.typeset.io:8085"
+    SNUBA: "$SENTRY_MAIN_ENDPOINT:1218"
+    VROOM: "$SENTRY_MAIN_ENDPOINT:8085"
     # Force everything to use the system CA bundle
     # This is mostly needed to support installing custom CA certs
     # This one is used by botocore
@@ -533,7 +533,7 @@ services:
       SENTRY_KAFKA_BROKERS_PROFILING: "kafka:9092"
       SENTRY_KAFKA_BROKERS_OCCURRENCES: "kafka:9092"
       SENTRY_BUCKET_PROFILES: file://localhost//var/lib/sentry-profiles
-      SENTRY_SNUBA_HOST: "https://sentry.typeset.io:1218"
+      SENTRY_SNUBA_HOST: "$SENTRY_MAIN_ENDPOINT:1218"
     # volumes:
     #   - sentry-vroom:/var/lib/sentry-profiles
     depends_on:
