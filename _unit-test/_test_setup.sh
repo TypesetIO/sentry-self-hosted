@@ -8,7 +8,7 @@ rm -rf /tmp/sentry-self-hosted-test-sandbox.*
 _SANDBOX="$(mktemp -d /tmp/sentry-self-hosted-test-sandbox.XXX)"
 
 source install/detect-platform.sh
-docker build -t 083388942401.dkr.ecr.us-west-2.amazonaws.com/sentry-self-hosted-jq --platform="$DOCKER_PLATFORM" jq
+docker build -t sentry-self-hosted-localed-jq --platform="$DOCKER_PLATFORM" jq
 
 report_success() {
   echo "$(basename $0) - Success 👍"

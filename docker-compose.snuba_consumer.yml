@@ -16,7 +16,7 @@ x-healthcheck-defaults: &healthcheck_defaults
   start_period: 10s
 x-sentry-defaults: &sentry_defaults
   <<: *restart_policy
-  image: 083388942401.dkr.ecr.us-west-2.amazonaws.com/sentry-self-host
+  image: sentry-self-hosted-local
   # Set the platform to build for linux/arm64 when needed on Apple silicon Macs.
   platform: ${DOCKER_PLATFORM:-}
   build:
