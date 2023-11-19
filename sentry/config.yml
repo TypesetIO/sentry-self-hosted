@@ -81,7 +81,7 @@ releasefile.cache-path: '/data/releasefile-cache'
 system.internal-url-prefix: 'http://web:9000'
 symbolicator.enabled: true
 symbolicator.options:
-  url: "http://symbolicator:3021"
+  url: "http://10.0.31.210:3021"
 
 transaction-events.force-disable-internal-project: true
 
