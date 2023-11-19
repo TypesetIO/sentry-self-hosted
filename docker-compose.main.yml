@@ -134,6 +134,7 @@ services:
     image: clickhouse-self-hosted-local
     ports:
       - 9000:9000
+      - 8123:8123
     build:
       context: ./clickhouse
       args:
