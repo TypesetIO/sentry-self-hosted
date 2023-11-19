@@ -20,8 +20,8 @@ x-snuba-defaults: &snuba_defaults
   environment:
     SNUBA_SETTINGS: self_hosted
     CLICKHOUSE_HOST: clickhouse
-    DEFAULT_BROKERS: "kafka:9092"
-    REDIS_HOST: redis
+    DEFAULT_BROKERS: "$SENTRY_MAIN_ENDPOINT:9092"
+    REDIS_HOST: $SENTRY_MAIN_ENDPOINT
     UWSGI_MAX_REQUESTS: "10000"
     UWSGI_DISABLE_LOGGING: "true"
     # Leaving the value empty to just pass whatever is set
@@ -61,17 +61,17 @@ services:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_distributions_raw --consumer-group snuba-gen-metrics-distributions-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 15
+      replicas: 20
   snuba-generic-metrics-sets-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_sets_raw --consumer-group snuba-gen-metrics-sets-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 8
+      replicas: 10
   snuba-generic-metrics-counters-consumer:
     <<: *snuba_defaults
     command: consumer --storage generic_metrics_counters_raw --consumer-group snuba-gen-metrics-counters-consumers --auto-offset-reset=latest --max-batch-time-ms 750 --no-strict-offset-reset
     deploy:
-      replicas: 7
+      replicas: 10
   snuba-replacer:
     <<: *snuba_defaults
     command: replacer --storage errors --auto-offset-reset=latest --no-strict-offset-reset

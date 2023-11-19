@@ -78,7 +78,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-generic-metrics --consumer-group generic-metrics-consumer
     deploy:
-      replicas: 5
+      replicas: 8
   # billing-metrics-consumer:
   #   <<: *sentry_defaults
   #   command: run consumer billing-metrics-consumer --consumer-group billing-metrics-consumer
