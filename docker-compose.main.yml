@@ -132,6 +132,8 @@ services:
   clickhouse:
     <<: *restart_policy
     image: clickhouse-self-hosted-local
+    ports:
+      - 9000:9000
     build:
       context: ./clickhouse
       args:
