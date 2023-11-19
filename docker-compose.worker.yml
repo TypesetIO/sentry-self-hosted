@@ -78,12 +78,12 @@ services:
     <<: *sentry_defaults
     command: run worker
     deploy:
-      replicas: 4
+      replicas: 3
   save-event-transaction-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 10
+      replicas: 12
   post-process--transactions-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
