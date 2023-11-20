@@ -123,7 +123,7 @@ services:
   web:
     <<: *sentry_defaults
     environment:
-      - SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
+      SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
     ulimits:
       nofile:
         soft: 4096
@@ -176,7 +176,7 @@ services:
         target: /geoip
       - sentry-relay:/var/spool/sentry_relay/data
     environment:
-      - SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
+      SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
     depends_on:
       web:
         <<: *depends_on-healthy
