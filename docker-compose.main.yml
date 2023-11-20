@@ -24,10 +24,6 @@ x-sentry-defaults: &sentry_defaults
     args:
       - SENTRY_IMAGE
   depends_on:
-    redis:
-      <<: *depends_on-healthy
-    memcached:
-      <<: *depends_on-default
     smtp:
       <<: *depends_on-default
     snuba-api:
@@ -36,15 +32,6 @@ x-sentry-defaults: &sentry_defaults
       <<: *depends_on-default
     vroom:
       <<: *depends_on-default
-  external_links:
-    - kafka
-    - snuba-consumer
-    - snuba-outcomes-consumer
-    - snuba-sessions-consumer
-    - snuba-transactions-consumer
-    - snuba-subscription-consumer-events
-    - snuba-subscription-consumer-transactions
-    - snuba-replacer
   entrypoint: "/etc/sentry/entrypoint.sh"
   command: ["run", "web"]
   environment:
@@ -81,19 +68,12 @@ x-sentry-defaults: &sentry_defaults
     - "./certificates:/usr/local/share/ca-certificates:ro"
 x-snuba-defaults: &snuba_defaults
   <<: *restart_policy
-  depends_on:
-    clickhouse:
-      <<: *depends_on-healthy
-    redis:
-      <<: *depends_on-healthy
-  external_links:
-    - kafka
   image: "$SNUBA_IMAGE"
   environment:
     SNUBA_SETTINGS: self_hosted
-    CLICKHOUSE_HOST: clickhouse
+    CLICKHOUSE_HOST: $SENTRY_STORAGE_ENDPOINT
     DEFAULT_BROKERS: "$SENTRY_MAIN_ENDPOINT:9092"
-    REDIS_HOST: redis
+    REDIS_HOST: $SENTRY_STORAGE_ENDPOINT
     UWSGI_MAX_REQUESTS: "10000"
     UWSGI_DISABLE_LOGGING: "true"
     # Leaving the value empty to just pass whatever is set
@@ -107,65 +87,6 @@ services:
     volumes:
       - "sentry-smtp:/var/spool/exim4"
       - "sentry-smtp-log:/var/log/exim4"
-  memcached:
-    <<: *restart_policy
-    image: "memcached:1.6.21-alpine"
-    command: ["-I", "${SENTRY_MAX_EXTERNAL_SOURCEMAP_SIZE:-1M}"]
-    healthcheck:
-      <<: *healthcheck_defaults
-      # From: https://stackoverflow.com/a/31877626/5155484
-      test: echo stats | nc 127.0.0.1 11211
-  redis:
-    <<: *restart_policy
-    image: "redis:6.2.12-alpine"
-    ports:
-      - 6379:6379
-    healthcheck:
-      <<: *healthcheck_defaults
-      test: redis-cli ping
-    volumes:
-      - "sentry-redis:/data"
-    ulimits:
-      nofile:
-        soft: 10032
-        hard: 10032
-  clickhouse:
-    <<: *restart_policy
-    image: clickhouse-self-hosted-local
-    ports:
-      - 9000:9000
-      - 8123:8123
-    build:
-      context: ./clickhouse
-      args:
-        BASE_IMAGE: "${CLICKHOUSE_IMAGE:-}"
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
-    volumes:
-      - "sentry-clickhouse:/var/lib/clickhouse"
-      - "sentry-clickhouse-log:/var/log/clickhouse-server"
-      - type: bind
-        read_only: true
-        source: ./clickhouse/config.xml
-        target: /etc/clickhouse-server/config.d/sentry.xml
-    environment:
-      # This limits Clickhouse's memory to 30% of the host memory
-      # If you have high volume and your search return incomplete results
-      # You might want to change this to a higher value (and ensure your host has enough memory)
-      MAX_MEMORY_USAGE_RATIO: 0.5
-    healthcheck:
-      test: [
-          "CMD-SHELL",
-          # Manually override any http_proxy envvar that might be set, because
-          # this wget does not support no_proxy. See:
-          # https://github.com/getsentry/self-hosted/issues/1537
-          "http_proxy='' wget -nv -t1 --spider 'http://localhost:8123/' || exit 1",
-        ]
-      interval: 10s
-      timeout: 30s
-      retries: 30
   geoipupdate:
     image: "maxmindinc/geoipupdate:v6.0.0"
     # Override the entrypoint in order to avoid using envvars for config.
@@ -253,14 +174,10 @@ services:
         target: /geoip
       - sentry-relay:/var/spool/sentry_relay/data
     depends_on:
-      redis:
-        <<: *depends_on-healthy
       web:
         <<: *depends_on-healthy
-    external_links:
-      - kafka
     deploy:
-      replicas: 4
+      replicas: 5
   vroom:
     <<: *restart_policy
     image: "$VROOM_IMAGE"
@@ -293,10 +210,6 @@ volumes:
   # These store application data that should persist across restarts.
   sentry-data:
     external: true
-  sentry-redis:
-    external: true
-  sentry-clickhouse:
-    external: true
   sentry-symbolicator:
     external: true
   sentry-relay:
@@ -310,4 +223,3 @@ volumes:
   sentry-smtp:
   sentry-nginx-cache:
   sentry-smtp-log:
-  sentry-clickhouse-log:
