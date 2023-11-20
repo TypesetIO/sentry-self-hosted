@@ -79,7 +79,7 @@ services:
     <<: *sentry_defaults
     command: run consumer ingest-generic-metrics --consumer-group generic-metrics-consumer
     deploy:
-      replicas: 4
+      replicas: 8
   # billing-metrics-consumer:
   #   <<: *sentry_defaults
   #   command: run consumer billing-metrics-consumer --consumer-group billing-metrics-consumer
@@ -96,12 +96,12 @@ services:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-errors --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-commit-log --synchronize-commit-group=snuba-consumers
     deploy:
-      replicas: 3
+      replicas: 4
   post-process-forwarder-transactions:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-transactions --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
     deploy:
-      replicas: 4
+      replicas: 5
   post-process-forwarder-issue-platform:
     <<: *sentry_defaults
     command: run consumer post-process-forwarder-issue-platform --consumer-group post-process-forwarder --synchronize-commit-log-topic=snuba-generic-events-commit-log --synchronize-commit-group generic_events_group
