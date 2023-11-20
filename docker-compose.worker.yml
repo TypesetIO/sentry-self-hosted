@@ -78,18 +78,14 @@ services:
   worker:
     <<: *sentry_defaults
     command: run worker
-    deploy:
-      replicas: 3
   save-event-transaction-worker:
     <<: *sentry_defaults
     command: run worker -Q events.save_event_transaction
     deploy:
-      replicas: 12
-  post-process--transactions-worker:
+      replicas: 18
+  post-process-transactions-worker:
     <<: *sentry_defaults
     command: run worker -Q post_process_transactions
-    deploy:
-      replicas: 4
 volumes:
   # These store application data that should persist across restarts.
   sentry-data:
