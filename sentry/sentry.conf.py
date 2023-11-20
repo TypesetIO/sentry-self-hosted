@@ -130,7 +130,7 @@ CACHES = {
 SENTRY_CACHE = "sentry.cache.redis.RedisCache"
 
 DEFAULT_KAFKA_OPTIONS = {
-    "bootstrap.servers": f"{os.environ.get('SENTRY_MAIN_ENDPOINT', 'kafka')}:9091",
+    "bootstrap.servers": f"{os.environ.get('SENTRY_STORAGE_ENDPOINT', 'kafka')}:9091",
     "message.max.bytes": 50000000,
     "socket.timeout.ms": 100000,
 }
