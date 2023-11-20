@@ -68,6 +68,7 @@ x-sentry-defaults: &sentry_defaults
     POSTGRESQL_PASSWORD: "$POSTGRESQL_PASSWORD"
     POSTGRESQL_HOST: "$POSTGRESQL_HOST"
     SENTRY_MAIN_ENDPOINT: "$SENTRY_MAIN_ENDPOINT"
+    SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
   volumes:
     - "sentry-data:/data"
     - "./sentry:/etc/sentry"
