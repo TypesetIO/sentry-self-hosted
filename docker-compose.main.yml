@@ -61,6 +61,7 @@ x-sentry-defaults: &sentry_defaults
     POSTGRESQL_USER: "$POSTGRESQL_USER"
     POSTGRESQL_PASSWORD: "$POSTGRESQL_PASSWORD"
     POSTGRESQL_HOST: "$POSTGRESQL_HOST"
+    SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
   volumes:
     - "sentry-data:/data"
     - "./sentry:/etc/sentry"
@@ -122,8 +123,6 @@ services:
       - "sentry-symbolicator:/data"
   web:
     <<: *sentry_defaults
-    environment:
-      SENTRY_STORAGE_ENDPOINT: "$SENTRY_STORAGE_ENDPOINT"
     ulimits:
       nofile:
         soft: 4096
